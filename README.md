@@ -50,8 +50,9 @@
 |------|-------------|
 | <a name="output_instance_id"></a> [instance\_id](#output\_instance\_id) | EC2 IDs |
 | <a name="output_private_key"></a> [private\_key](#output\_private\_key) | Private Pem Key |
-| <a name="output_public_ip"></a> [public\_ip](#output\_public\_ip) | n/a |
+| <a name="output_public_ip"></a> [public\_ip](#output\_public\_ip) | EC2 instance Public IP |
 <!-- END_TF_DOCS -->
+
 
 
 ## Sample .tfvars
@@ -71,7 +72,7 @@
 
 ## Terraform Cloud Setting
 Configure `organization`, `workspaces` terraform cloud block in provider.tf. For more [detail](https://www.terraform.io/cli/cloud/settings)
-```
+```yaml
 terraform {
   cloud {
     organization = "" #define organization name
@@ -80,4 +81,38 @@ terraform {
     }
   }
   ...
+```
+
+## Provision Infra
+```bash
+terraform init
+terraform apply
+```
+
+**Example**
+```bash
+Outputs:
+
+instance_id = [
+  "i-0aaa3ce1569395fc5",
+  "i-06d68f32323161e42",
+]
+private_key = <sensitive> #get value from terraform state on remote
+public_ip = [
+  "13.213.45.104",
+  "54.179.253.60",
+]
+```
+Master node has a file `kubeadm_token` in HOME directory and has a content to run on worker node to connect to the master node.
+```bash
+$ cat ~/kubeadm_token
+kubeadm join 10.0.1.32:6443 --token <token> --discovery-token-ca-cert-hash <sha256 value>
+```
+Copy the content and run on the worker node.<br>
+Finally, run `kubectl get node` on the master node, worker node will be ready connected.
+```bash
+$ kubectl get node
+NAME            STATUS   ROLES                  AGE   VERSION
+ip-10-0-1-157   Ready    <none>                 2m   v1.22.2
+ip-10-0-1-32    Ready    control-plane,master   3m   v1.22.2
 ```

@@ -46,9 +46,10 @@ resource "tls_private_key" "this" {
 }
 
 resource "local_file" "private_key" {
-  content         = tls_private_key.this.private_key_pem
-  filename        = join(".", [var.key_name, "pem"])
-  file_permission = "0400"
+  #  content         = tls_private_key.this.private_key_pem
+  sensitive_content = tls_private_key.this.private_key_pem
+  filename          = join(".", [var.key_name, "pem"])
+  file_permission   = "0600"
 }
 
 ## AWS KEY_PAIR MODULE ##
@@ -80,12 +81,12 @@ resource "random_shuffle" "user_data_file" {
 
 #Create EC2 as Spot instance
 resource "aws_spot_instance_request" "ec2_spot" {
-  count         = var.spot_instance.num_of_instance
-  ami           = var.spot_instance.ami
-  spot_price    = var.spot_instance.spot_type
-  instance_type = var.spot_instance.instance_type
-  spot_type     = var.spot_instance.spot_type
-  user_data = file(random_shuffle.user_data_file.result[count.index])
+  count                  = var.spot_instance.num_of_instance
+  ami                    = var.spot_instance.ami
+  spot_price             = var.spot_instance.spot_type
+  instance_type          = var.spot_instance.instance_type
+  spot_type              = var.spot_instance.spot_type
+  user_data              = file(random_shuffle.user_data_file.result[count.index])
   subnet_id              = var.spot_instance.internal ? random_shuffle.private_subnet_ids.result[count.index] : random_shuffle.public_subnet_ids.result[count.index]
   wait_for_fulfillment   = var.spot_instance.wait_for_fulfillment
   key_name               = module.key-pair.key_pair_key_name

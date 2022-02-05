@@ -1,6 +1,6 @@
 ## PRIVATE PEM KEY ##
 output "private_key" {
-  value       = local_file.private_key.content
+  value       = local_file.private_key.sensitive_content
   description = "Private Pem Key"
   sensitive   = true
 }
@@ -11,5 +11,6 @@ output "instance_id" {
 }
 
 output "public_ip" {
-  value = aws_spot_instance_request.ec2_spot.*.public_ip
+  value       = aws_spot_instance_request.ec2_spot.*.public_ip
+  description = "EC2 instance Public IP"
 }
