@@ -66,3 +66,18 @@
 | <a name="input_private_subnet_ids"></a> [private\_subnet\_ids](#input\_private\_subnet\_ids) | Private Subnet IDs | `["subnet-987", "subnet-654", "subnet-321"]` |
 | <a name="input_spot_instance"></a> [spot\_instance](#input\_spot\_instance) | n/a | <pre>ami = "ami-1234567"<br>instance_type = "t3.medium"<br>spot_price = "0.03"<br>spot_type = "one-time"<br>wait_for_fullfilment = true<br>internal = false<br>num_of_instance = 2</pre> |
 | <a name="input_target_group"></a> [target\_group](#input\_target\_group) | n/a | <pre>port = 80<br>protocol = "HTTP"<br>target_type = "instance"<br>health_check = {<br>  path = "/"<br>  protocol = "HTTP"<br>  port = 80<br>}</pre> |
+
+
+
+## Terraform Cloud Setting
+Configure `organization`, `workspaces` terraform cloud block in provider.tf. For more [detail](https://www.terraform.io/cli/cloud/settings)
+```
+terraform {
+  cloud {
+    organization = "" #define organization name
+    workspaces {
+      name = "ec2-k8s" #workspace name
+    }
+  }
+  ...
+```
