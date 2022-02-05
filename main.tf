@@ -73,10 +73,10 @@ resource "random_shuffle" "private_subnet_ids" {
   result_count = var.spot_instance.num_of_instance
 }
 
-#resource "random_shuffle" "user_data_file" {
-#  input        = fileset(path.module, "file/*.txt")
-#  result_count = var.spot_instance.num_of_instance
-#}
+resource "random_shuffle" "user_data_file" {
+  input        = fileset(path.module, "file/*.txt")
+  result_count = var.spot_instance.num_of_instance
+}
 
 #Create EC2 as Spot instance
 resource "aws_spot_instance_request" "ec2_spot" {
@@ -85,7 +85,7 @@ resource "aws_spot_instance_request" "ec2_spot" {
   spot_price    = var.spot_instance.spot_type
   instance_type = var.spot_instance.instance_type
   spot_type     = var.spot_instance.spot_type
-#  user_data = file(random_shuffle.user_data_file.result[count.index])
+  user_data = file(random_shuffle.user_data_file.result[count.index])
   subnet_id              = var.spot_instance.internal ? random_shuffle.private_subnet_ids.result[count.index] : random_shuffle.public_subnet_ids.result[count.index]
   wait_for_fulfillment   = var.spot_instance.wait_for_fulfillment
   key_name               = module.key-pair.key_pair_key_name
